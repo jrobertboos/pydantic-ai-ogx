@@ -9,7 +9,7 @@ import pytest
 from openai import AsyncOpenAI
 from pydantic_ai.models.openai import OpenAIChatModel, OpenAIResponsesModel
 
-from pydantic_ai_ogx import OgxProvider, create_ogx_library_model, create_ogx_model
+from pydantic_ai_ogx import OgxProvider
 
 
 # ---------------------------------------------------------------------------
@@ -91,6 +91,23 @@ class TestOgxProviderLibraryMode:
         assert provider.name == "ogx"
         assert isinstance(provider.client, AsyncOpenAI)
         assert "ogx-library" in provider.base_url
+
+    def test_plain_ogx_client_server_mode(self) -> None:
+        from ogx_client import AsyncOgxClient
+
+        client = AsyncOgxClient(base_url="http://my-ogx:9999/v1", api_key="my-key")
+        provider = OgxProvider(ogx_client=client)
+        assert provider.name == "ogx"
+        assert isinstance(provider.client, AsyncOpenAI)
+        assert "my-ogx:9999" in provider.base_url
+        assert provider.client.api_key == "my-key"
+
+    def test_plain_ogx_client_rejects_base_url(self) -> None:
+        from ogx_client import AsyncOgxClient
+
+        client = AsyncOgxClient(base_url="http://my-ogx:9999/v1")
+        with pytest.raises(AssertionError, match="base_url"):
+            OgxProvider(ogx_client=client, base_url="http://nope")
 
 
 # ---------------------------------------------------------------------------

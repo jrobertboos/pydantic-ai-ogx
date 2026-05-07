@@ -18,7 +18,7 @@ OGX is an open-source agentic API server that provides a drop-in replacement for
 
 `pydantic-ai-ogx` provides an `OgxProvider` for [Pydantic AI](https://github.com/pydantic/pydantic-ai) that works with both `OpenAIChatModel` and `OpenAIResponsesModel`. It supports two modes:
 
-1. **Server mode** -- connect to a running OGX server via HTTP
+1. **Server mode** -- connect to a running OGX server via HTTP (with a `base_url` or an `AsyncOgxClient`)
 2. **Library mode** -- run OGX in-process via `AsyncOGXAsLibraryClient` (no server needed)
 
 ## Installation
@@ -184,7 +184,7 @@ result = await agent.run("What is the weather in Paris?")
 |-----------|------|-------------|
 | `base_url` | `str \| None` | OGX server URL. **Required** for server mode. |
 | `api_key` | `str \| None` | API key. Defaults to `"not-needed"` since OGX servers typically don't require one. |
-| `ogx_client` | `AsyncOGXAsLibraryClient \| None` | An initialised library client for in-process mode. Mutually exclusive with `base_url`, `api_key`, and `http_client`. |
+| `ogx_client` | `AsyncOgxClient \| None` | An OGX client instance. When an `AsyncOGXAsLibraryClient` (subclass) is passed, requests are dispatched in-process (library mode). A plain `AsyncOgxClient` reuses its `base_url`/`api_key` for server mode. Mutually exclusive with `base_url`, `api_key`, and `http_client`. |
 | `http_client` | `httpx.AsyncClient \| None` | Custom httpx client for server mode. |
 
 ## Model Names
